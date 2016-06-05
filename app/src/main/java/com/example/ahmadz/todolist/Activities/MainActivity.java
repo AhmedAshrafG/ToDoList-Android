@@ -7,14 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
 import com.example.ahmadz.todolist.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements TodoItemListener{
+public class MainActivity extends AppCompatActivity{
 	@BindView(R.id.toolbar)
 	Toolbar toolbar;
 
@@ -24,27 +22,6 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener{
 		ButterKnife.bind(this);
 		setContentView(R.layout.activity_main);
 		setSupportActionBar(toolbar);
-
-	}
-
-	@OnClick(R.id.fab)
-	public void onFabClick(){
-		addTodoItem();
-	}
-
-	@Override
-	public void itemLongPressed(int position) {
-
-	}
-
-	@Override
-	public void itemSinglePressed(int position) {
-
-	}
-
-
-	private void addTodoItem() {
-
 	}
 
 	@Override

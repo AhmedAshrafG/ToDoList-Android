@@ -88,10 +88,9 @@ public class MyDBHelper extends SQLiteOpenHelper{
 		return todoItems;
 	}
 
-	public long addTodoItem(String title, String body){
+	public long addTodoItem(String title){
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_ITEM_TITLE, title);
-		values.put(COLUMN_ITEM_BODY, body);
 
 		SQLiteDatabase db = this.getWritableDatabase();
 

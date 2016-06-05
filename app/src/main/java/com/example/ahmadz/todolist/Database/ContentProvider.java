@@ -36,4 +36,16 @@ public class ContentProvider {
 			}
 		});
 	}
+
+	public void addTodoItem(String todoTitle) {
+		dbHelper.addTodoItem(todoTitle);
+	}
+
+	public void editTodoItem(long id, String todoTitle) {
+		dbHelper.editTodoItemTitle(id, todoTitle);
+	}
+
+	public void deleteTodoItem(long id) {
+		dbHelper.deleteTodoItem(id);
+	}
 }
