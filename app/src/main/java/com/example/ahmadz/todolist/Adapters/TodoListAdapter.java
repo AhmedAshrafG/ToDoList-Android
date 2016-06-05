@@ -83,10 +83,39 @@ public class TodoListAdapter extends BaseAdapter {
 		return convertView;
 	}
 
+	public void setData(List<TodoItemModel> todoItems) {
+		this.todoItems = todoItems;
+		notifyDataSetChanged();
+	}
+
+	public void removeItem(int position){
+		todoItems.remove(position);
+		notifyDataSetChanged();
+	}
+
+	public void editItemTitle(int position, String title){
+		todoItems.get(position).setTitle(title);
+		notifyDataSetChanged();
+	}
+
+	public void editItemBody(int position, String body){
+		todoItems.get(position).setBody(body);
+		notifyDataSetChanged();
+	}
+
+	public void addItem(TodoItemModel todoItem){
+		todoItems.add(todoItem);
+		notifyDataSetChanged();
+	}
+
+	public TodoItemModel getTodoItem(int position) {
+		return todoItems.get(position);
+	}
+
 	static class ViewHolder{
 		@BindView(R.id.title_tv)
 		TextView itemTitle;
-		@BindView(R.id.item_container)
+		@BindView(R.id.text_container)
 		View itemContainer;
 
 		public ViewHolder(View view){
