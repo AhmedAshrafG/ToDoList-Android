@@ -63,9 +63,22 @@ public class TodoListAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		//set tags.
+		viewHolder.setAllTag(position);
+		//set values.
 		viewHolder.setTitle((String)getItem(position));
-
-
+		//long click callback trigger.
+		viewHolder.itemContainer.setOnLongClickListener(v -> {
+			int tag = (int)v.getTag();
+			if (todoItemListener != null)
+				todoItemListener.itemLongPressed(tag);
+			return true;
+		});
+		//single click callback trigger.
+		viewHolder.itemContainer.setOnClickListener(v -> {
+			int tag = (int)v.getTag();
+			if (todoItemListener != null)
+				todoItemListener.itemSinglePressed(tag);
+		});
 
 		return convertView;
 	}
@@ -73,6 +86,8 @@ public class TodoListAdapter extends BaseAdapter {
 	static class ViewHolder{
 		@BindView(R.id.title_tv)
 		TextView itemTitle;
+		@BindView(R.id.item_container)
+		View itemContainer;
 
 		public ViewHolder(View view){
 			ButterKnife.bind(this, view);
@@ -80,6 +95,11 @@ public class TodoListAdapter extends BaseAdapter {
 
 		public void setTitle(String title) {
 			itemTitle.setText(title);
+		}
+
+		public void setAllTag(int position){
+			itemTitle.setTag(position);
+			itemContainer.setTag(position);
 		}
 	}
 }
