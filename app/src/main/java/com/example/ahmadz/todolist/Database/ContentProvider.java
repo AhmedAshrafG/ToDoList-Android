@@ -13,6 +13,7 @@ public class ContentProvider {
 
 	private MyDBHelper dbHelper;
 	private static ContentProvider mInstance;
+	private Observable<List<TodoItemModel>> todoListObservable;
 
 	public static ContentProvider getInstance(Context context){
 		if (mInstance == null)
@@ -23,10 +24,11 @@ public class ContentProvider {
 
 	private ContentProvider(Context mContext){
 		dbHelper = MyDBHelper.getInstance(mContext);
+		initObservables();
 	}
 
-	public Observable<List<TodoItemModel>> getTodoListObservable(){
-		return Observable.create(subscriber -> {
+	private void initObservables() {
+		todoListObservable = Observable.create(subscriber -> {
 			try{
 				subscriber.onNext(dbHelper.getAllTodoItems());
 				subscriber.onCompleted();
@@ -37,12 +39,20 @@ public class ContentProvider {
 		});
 	}
 
-	public void addTodoItem(String todoTitle) {
-		dbHelper.addTodoItem(todoTitle);
+	public Observable<List<TodoItemModel>> getTodoListObservable(){
+		return todoListObservable;
 	}
 
-	public void editTodoItem(long id, String todoTitle) {
+	public long addTodoItem(String todoTitle) {
+		return dbHelper.addTodoItem(todoTitle);
+	}
+
+	public void editTodoItemTitle(long id, String todoTitle) {
 		dbHelper.editTodoItemTitle(id, todoTitle);
+	}
+
+	public void editTodoItem(long id, String todoTitle, String todoBody) {
+		dbHelper.editTodoItem(id, todoTitle, todoBody);
 	}
 
 	public void deleteTodoItem(long id) {
