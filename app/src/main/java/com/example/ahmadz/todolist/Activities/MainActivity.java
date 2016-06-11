@@ -9,18 +9,18 @@ import android.widget.Toast;
 
 import com.example.ahmadz.todolist.R;
 
-import butterknife.BindView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity{
-	@BindView(R.id.toolbar)
+	@Bind(R.id.toolbar)
 	Toolbar toolbar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ButterKnife.bind(this);
 		setContentView(R.layout.activity_main);
+		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 	}
 

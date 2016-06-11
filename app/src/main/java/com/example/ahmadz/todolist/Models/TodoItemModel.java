@@ -1,9 +1,11 @@
 package com.example.ahmadz.todolist.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by ahmadz on 6/5/16.
  */
-public class TodoItemModel {
+public class TodoItemModel implements Serializable{
 	private long ID;
 	private String title;
 	private String body;

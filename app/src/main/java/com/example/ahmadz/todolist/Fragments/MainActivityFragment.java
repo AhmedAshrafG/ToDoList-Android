@@ -144,15 +144,15 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 							showMaterialDialog(todoItem.getID(), todoItem.getTitle());
 							break;
 						case R.id.menu_item_delete:
-							deleteTodoItem(position);
+							showDeleteDialog(position);
 							break;
 					}
 				}).show();
 	}
 
 	private void deleteTodoItem(int position) {
-		adapter.removeItem(position);
 		provider.deleteTodoItem(adapter.getTodoItem(position).getID());
+		adapter.removeItem(position);
 	}
 
 	@Override
@@ -164,6 +164,10 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 
 	@Override
 	public void itemRemovePressed(int position) {
+		showDeleteDialog(position);
+	}
+
+	private void showDeleteDialog(int position) {
 		new MaterialDialog.Builder(mContext)
 				.title("Delete ToDo")
 				.content("Do you want to delete this ToDo Item?")

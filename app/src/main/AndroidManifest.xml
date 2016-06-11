@@ -18,6 +18,16 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".Activities.TodoEditActivity"
+            android:label="@string/title_activity_todo_edit"
+            android:parentActivityName=".Activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ahmadz.todolist.Activities.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

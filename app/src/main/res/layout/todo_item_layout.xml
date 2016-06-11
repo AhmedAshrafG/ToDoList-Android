@@ -7,7 +7,7 @@
     <ImageButton
         android:layout_width="60dp"
         android:layout_height="match_parent"
-        android:id="@+id/btn_bookmark"
+        android:id="@+id/btn_remove"
         android:src="@drawable/abc_ic_clear_mtrl_alpha"
         android:background="@drawable/border_2bookmark"
         android:cropToPadding="false"
@@ -16,41 +16,30 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/border_1bookmark"
-        android:layout_weight="1"
-        android:layout_gravity="right">
+        >
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:id="@+id/text_container"
-            android:layout_weight="1"
             android:layout_gravity="right">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@+id/title_tv"
-                android:padding="10dp"
-                android:layout_marginLeft="10dp"
-                />
+                android:gravity="center_vertical"
+                android:background="@null"
+                android:padding="10dp"/>
 
         </LinearLayout>
 
-        ImageButton
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:id="@+id/btn_remove"
-            android:src="@drawable/abc_ic_clear_mtrl_alpha"
-            android:layout_gravity="center"
-            android:cropToPadding="false"
-            android:background="@null"
-            android:tint="#b29999"/>
     </LinearLayout>
 
 </LinearLayout>
