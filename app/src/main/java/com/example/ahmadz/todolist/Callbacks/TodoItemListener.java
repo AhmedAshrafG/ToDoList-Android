@@ -6,4 +6,5 @@ package com.example.ahmadz.todolist.Callbacks;
 public interface TodoItemListener {
 	void itemLongPressed(int position);
 	void itemSinglePressed(int position);
+	void itemRemovePressed(int position);
 }

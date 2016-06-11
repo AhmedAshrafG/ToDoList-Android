@@ -1,6 +1,7 @@
 package com.example.ahmadz.todolist.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
+import com.example.ahmadz.todolist.Activities.TodoEditActivity;
 import com.example.ahmadz.todolist.Adapters.TodoListAdapter;
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
 import com.example.ahmadz.todolist.Database.ContentProvider;
@@ -23,7 +25,7 @@ import com.example.ahmadz.todolist.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;
@@ -36,10 +38,8 @@ import rx.schedulers.Schedulers;
 public class MainActivityFragment extends Fragment implements TodoItemListener{
 
 	private final String TAG = this.getClass().getSimpleName();
-	@BindView(R.id.todo_lv)
-	ListView todoLv;
-	@BindView(R.id.progressBar)
-	ProgressBar progressBar;
+	@Bind(R.id.todo_lv) ListView todoLv;
+	@Bind(R.id.progressBar) ProgressBar progressBar;
 	private Context mContext;
 	private TodoListAdapter adapter;
 	private ContentProvider provider;
@@ -93,10 +93,6 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 
 	@OnClick(R.id.fab)
 	public void fabOnClick(){
-		addTodoItem();
-	}
-
-	private void addTodoItem() {
 		showMaterialDialog(-1, "");
 	}
 
@@ -119,11 +115,21 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 
 					}else {
 						if (ID == -1)
-							provider.addTodoItem(todoTitle);
+							addTodoItem(todoTitle);
 						else
-							provider.editTodoItem(ID, todoTitle);
+							editTodoItem(ID, todoTitle);
 					}
 				}).show();
+	}
+
+	private void editTodoItem(long ID, String todoTitle) {
+		adapter.editItemTitle(ID, todoTitle);
+		provider.editTodoItemTitle(ID, todoTitle);
+	}
+
+	private void addTodoItem(String todoTitle) {
+		long ID = provider.addTodoItem(todoTitle);
+		adapter.addItem(new TodoItemModel(ID, todoTitle));
 	}
 
 	@Override
@@ -151,6 +157,19 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 
 	@Override
 	public void itemSinglePressed(int position) {
+		Intent intent = new Intent(mContext, TodoEditActivity.class);
+		intent.putExtra(getString(R.string.extra_todo_model), adapter.getTodoItem(position));
+		startActivity(intent);
+	}
 
+	@Override
+	public void itemRemovePressed(int position) {
+		new MaterialDialog.Builder(mContext)
+				.title("Delete ToDo")
+				.content("Do you want to delete this ToDo Item?")
+				.positiveText("Confirm")
+				.negativeText("Cancel")
+				.onPositive((dialog, which) -> 	deleteTodoItem(position))
+				.show();
 	}
 }

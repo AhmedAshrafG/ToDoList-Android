@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
@@ -13,7 +14,7 @@ import com.example.ahmadz.todolist.R;
 
 import java.util.List;
 
-import butterknife.BindView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -65,7 +66,7 @@ public class TodoListAdapter extends BaseAdapter {
 		//set tags.
 		viewHolder.setAllTag(position);
 		//set values.
-		viewHolder.setTitle((String)getItem(position));
+		viewHolder.setTitle(getTodoItem(position).getTitle());
 		//long click callback trigger.
 		viewHolder.itemContainer.setOnLongClickListener(v -> {
 			int tag = (int)v.getTag();
@@ -78,6 +79,12 @@ public class TodoListAdapter extends BaseAdapter {
 			int tag = (int)v.getTag();
 			if (todoItemListener != null)
 				todoItemListener.itemSinglePressed(tag);
+		});
+		//remove button click callback trigger.
+		viewHolder.removeBtn.setOnClickListener(v -> {
+			int tag = (int)v.getTag();
+			if (todoItemListener != null)
+				todoItemListener.itemRemovePressed(tag);
 		});
 
 		return convertView;
@@ -93,14 +100,20 @@ public class TodoListAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void editItemTitle(int position, String title){
-		todoItems.get(position).setTitle(title);
-		notifyDataSetChanged();
+	public void editItemTitle(long ID, String title){
+		TodoItemModel item = getItemByID(ID);
+		if (item != null) {
+			item.setTitle(title);
+			notifyDataSetChanged();
+		}
 	}
 
-	public void editItemBody(int position, String body){
-		todoItems.get(position).setBody(body);
-		notifyDataSetChanged();
+	private TodoItemModel getItemByID(long ID) {
+		for (TodoItemModel item: todoItems)
+			if (item.getID() == ID)
+				return item;
+
+		return null;
 	}
 
 	public void addItem(TodoItemModel todoItem){
@@ -113,10 +126,12 @@ public class TodoListAdapter extends BaseAdapter {
 	}
 
 	static class ViewHolder{
-		@BindView(R.id.title_tv)
+		@Bind(R.id.title_tv)
 		TextView itemTitle;
-		@BindView(R.id.text_container)
+		@Bind(R.id.text_container)
 		View itemContainer;
+		@Bind(R.id.btn_remove)
+		ImageButton removeBtn;
 
 		public ViewHolder(View view){
 			ButterKnife.bind(this, view);
@@ -129,6 +144,7 @@ public class TodoListAdapter extends BaseAdapter {
 		public void setAllTag(int position){
 			itemTitle.setTag(position);
 			itemContainer.setTag(position);
+			removeBtn.setTag(position);
 		}
 	}
 }
