@@ -21,13 +21,27 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_input_add"/>
+        android:src="@android:drawable/ic_input_add"
+        android:tint="#ffffff"
+        />
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:layout_gravity="center"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Click on the bottom right button to add a ToDo!"
+        android:id="@+id/empty_message"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:background="@null"
+        android:textColor="#265e8c"
         android:visibility="invisible"/>
 
 </FrameLayout>

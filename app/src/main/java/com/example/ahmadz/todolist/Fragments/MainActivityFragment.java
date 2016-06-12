@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,6 +41,7 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 	private final String TAG = this.getClass().getSimpleName();
 	@Bind(R.id.todo_lv) ListView todoLv;
 	@Bind(R.id.progressBar) ProgressBar progressBar;
+	@Bind(R.id.empty_message) TextView emptyMessage;
 	private Context mContext;
 	private TodoListAdapter adapter;
 	private ContentProvider provider;
@@ -76,6 +78,7 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 					@Override
 					public void onCompleted() {
 						progressBar.setVisibility(View.INVISIBLE);
+						checkForEmptiness();
 					}
 
 					@Override
@@ -114,8 +117,10 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 								.show();
 
 					}else {
+						//adding a new item.
 						if (ID == -1)
 							addTodoItem(todoTitle);
+						//editing an existing item.
 						else
 							editTodoItem(ID, todoTitle);
 					}
@@ -130,6 +135,7 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 	private void addTodoItem(String todoTitle) {
 		long ID = provider.addTodoItem(todoTitle);
 		adapter.addItem(new TodoItemModel(ID, todoTitle));
+		checkForEmptiness();
 	}
 
 	@Override
@@ -153,6 +159,14 @@ public class MainActivityFragment extends Fragment implements TodoItemListener{
 	private void deleteTodoItem(int position) {
 		provider.deleteTodoItem(adapter.getTodoItem(position).getID());
 		adapter.removeItem(position);
+		checkForEmptiness();
+	}
+
+	private void checkForEmptiness() {
+		if (adapter.getCount() > 0)
+			emptyMessage.setVisibility(View.INVISIBLE);
+		else
+			emptyMessage.setVisibility(View.VISIBLE);
 	}
 
 	@Override
