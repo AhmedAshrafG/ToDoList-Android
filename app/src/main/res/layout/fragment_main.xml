@@ -11,8 +11,8 @@
                 tools:showIn="@layout/activity_main">
 
     <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/todo_lv"/>
 
     <android.support.design.widget.FloatingActionButton
