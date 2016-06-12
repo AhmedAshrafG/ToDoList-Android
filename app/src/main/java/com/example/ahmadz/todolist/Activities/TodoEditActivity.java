@@ -33,6 +33,5 @@ public class TodoEditActivity extends AppCompatActivity {
 	public void onBackPressed() {
 		if (backPressedListener != null)
 			backPressedListener.backPressed();
-		super.onBackPressed();
 	}
 }

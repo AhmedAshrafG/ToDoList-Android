@@ -66,18 +66,18 @@ public class TodoEditActivityFragment extends Fragment implements BackPressedLis
 		int id = item.getItemId();
 
 		if (id == R.id.menu_item_save) {
-			saveStuff();
-			getActivity().finish();
+			saveStuffAndExit();
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void saveStuff() {
+	private void saveStuffAndExit() {
 		String title = title_field.getText().toString();
 		String body = body_field.getText().toString();
 		ContentProvider.getInstance(mContext).editTodoItem(todoItem.getID(), title, body);
+		getActivity().finish();
 	}
 
 
@@ -87,6 +87,8 @@ public class TodoEditActivityFragment extends Fragment implements BackPressedLis
 		String body = body_field.getText().toString();
 		if (!todoItem.getBody().equals(body) || !todoItem.getTitle().equals(title))
 			showDialog();
+		else
+			getActivity().finish();
 	}
 
 	private void showDialog() {
@@ -95,7 +97,8 @@ public class TodoEditActivityFragment extends Fragment implements BackPressedLis
 				.content("Do you want to save before you quit?")
 				.positiveText("Save!")
 				.negativeText("Don't Save")
-				.onPositive((dialog, which) -> saveStuff())
+				.onPositive((dialog, which) -> saveStuffAndExit())
+				.onNegative((dialog1, which1) -> getActivity().finish())
 				.show();
 	}
 }
