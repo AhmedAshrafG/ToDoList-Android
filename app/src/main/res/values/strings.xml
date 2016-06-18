@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">ToDoList</string>
+    <string name="app_name">ToDo</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_todo_edit">TodoEditActivity</string>
+    <string name="title_activity_todo_edit">Edit ToDo</string>
     <string name="extra_todo_model">todo_model</string>
+    <string name="not_set">Not Set</string>
+    <string name="menu_save">Save</string>
 </resources>

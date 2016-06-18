@@ -4,8 +4,8 @@
       tools:context="com.example.ahmadz.todolist.Activities.TodoEditActivity">
     <item
         android:id="@+id/menu_item_save"
-        app:showAsAction="always|withText"
-        android:title="Edit"
+        app:showAsAction="always"
+        android:title="@string/menu_save"
         android:icon="@android:drawable/ic_menu_save"
         android:visible="true"/>
 
