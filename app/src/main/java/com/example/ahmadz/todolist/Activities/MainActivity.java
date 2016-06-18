@@ -21,6 +21,7 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ahmadz.todolist.Adapters.TodoListAdapter;
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
 import com.example.ahmadz.todolist.Database.ContentProvider;
+import com.example.ahmadz.todolist.Models.TodoDate;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
 
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	private void addTodoItem(String todoTitle) {
 		long ID = provider.addTodoItem(todoTitle);
-		adapter.addItem(new TodoItemModel(ID, todoTitle));
+		adapter.addItem(new TodoItemModel(ID, todoTitle, new TodoDate(null)));
 		checkForEmptiness();
 	}
 

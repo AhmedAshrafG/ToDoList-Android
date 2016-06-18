@@ -9,6 +9,7 @@ import java.util.Calendar;
  */
 public class TimeHelper {
 	private TimePickerDialog.OnTimeSetListener listener;
+	private TimePickerDialog mTimeDialog;
 
 	public TimeHelper(TimePickerDialog.OnTimeSetListener listener) {
 		this.listener = listener;
@@ -16,6 +17,7 @@ public class TimeHelper {
 
 	public void setListener(TimePickerDialog.OnTimeSetListener listener) {
 		this.listener = listener;
+		mTimeDialog.setOnTimeSetListener(listener);
 	}
 
 	public TimePickerDialog getDialog(){
@@ -27,11 +29,13 @@ public class TimeHelper {
 	}
 
 	public TimePickerDialog getDialog(int hour, int minute){
-		return TimePickerDialog.newInstance(
-				listener,
-				hour,
-				minute,
-				true
-		);
+		if (mTimeDialog == null)
+			mTimeDialog = TimePickerDialog.newInstance(
+					listener,
+					hour,
+					minute,
+					true
+			);
+		return mTimeDialog;
 	}
 }

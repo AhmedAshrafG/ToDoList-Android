@@ -9,7 +9,7 @@ import java.util.Calendar;
  */
 public class DateHelper {
 	private DatePickerDialog.OnDateSetListener listener;
-	private final String tag = "DateDialog";
+	private DatePickerDialog mDateDialog;
 
 	public DateHelper(DatePickerDialog.OnDateSetListener listener) {
 		this.listener = listener;
@@ -17,6 +17,7 @@ public class DateHelper {
 
 	public void setListener(DatePickerDialog.OnDateSetListener listener) {
 		this.listener = listener;
+		mDateDialog.setOnDateSetListener(listener);
 	}
 
 	public DatePickerDialog getDialog(){
@@ -30,12 +31,13 @@ public class DateHelper {
 	}
 
 	public DatePickerDialog getDialog(int year, int month, int day){
-		return  DatePickerDialog.newInstance(
-				listener,
-				year,
-				month,
-				day
-		);
-
+		if (mDateDialog == null)
+			mDateDialog = DatePickerDialog.newInstance(
+					listener,
+					year,
+					month,
+					day
+			);
+		return mDateDialog;
 	}
 }

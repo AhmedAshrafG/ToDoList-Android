@@ -9,15 +9,17 @@ public class TodoItemModel implements Serializable{
 	private long ID;
 	private String title;
 	private String body;
+	private TodoDate todoDate;
 
-	public TodoItemModel(long ID, String title){
-		this(ID, title, "");
+	public TodoItemModel(long ID, String title, TodoDate todoDate){
+		this(ID, title, "", todoDate);
 	}
 
-	public TodoItemModel(long ID, String title, String body){
+	public TodoItemModel(long ID, String title, String body, TodoDate todoDate){
 		this.title = title;
 		this.body = body;
 		this.ID = ID;
+		this.todoDate = todoDate;
 	}
 
 	public String getTitle() {
@@ -48,5 +50,13 @@ public class TodoItemModel implements Serializable{
 		TodoItemModel that = (TodoItemModel)o;
 
 		return this.getID() == that.getID();
+	}
+
+	public TodoDate getTodoDate() {
+		return todoDate;
+	}
+
+	public void setTodoDate(TodoDate todoDate) {
+		this.todoDate = todoDate;
 	}
 }

@@ -11,7 +11,7 @@ import rx.Observable;
 
 public class ContentProvider {
 
-	private MyDBHelper dbHelper;
+	private MyDBHelper mDBHelper;
 	private static ContentProvider mInstance;
 	private Observable<List<TodoItemModel>> todoListObservable;
 
@@ -23,14 +23,14 @@ public class ContentProvider {
 	}
 
 	private ContentProvider(Context mContext){
-		dbHelper = MyDBHelper.getInstance(mContext);
+		mDBHelper = MyDBHelper.getInstance(mContext);
 		initObservables();
 	}
 
 	private void initObservables() {
 		todoListObservable = Observable.create(subscriber -> {
 			try{
-				subscriber.onNext(dbHelper.getAllTodoItems());
+				subscriber.onNext(mDBHelper.getAllTodoItems());
 				subscriber.onCompleted();
 
 			}catch (Exception e){
@@ -44,18 +44,26 @@ public class ContentProvider {
 	}
 
 	public long addTodoItem(String todoTitle) {
-		return dbHelper.addTodoItem(todoTitle);
+		return mDBHelper.addTodoItem(todoTitle);
 	}
 
 	public void editTodoItemTitle(long id, String todoTitle) {
-		dbHelper.editTodoItemTitle(id, todoTitle);
+		mDBHelper.editTodoItemTitle(id, todoTitle);
 	}
 
 	public void editTodoItem(long id, String todoTitle, String todoBody) {
-		dbHelper.editTodoItem(id, todoTitle, todoBody);
+		mDBHelper.editTodoItem(id, todoTitle, todoBody);
 	}
 
 	public void deleteTodoItem(long id) {
-		dbHelper.deleteTodoItem(id);
+		mDBHelper.deleteTodoItem(id);
+	}
+
+	public void editTodoItemDate(long id, int year, int monthOfYear, int dayOfMonth) {
+		mDBHelper.editTodoDate(id, year, monthOfYear, dayOfMonth);
+	}
+
+	public void editTodoItemTime(long id, int hourOfDay, int minute) {
+		mDBHelper.editTodoTime(id, hourOfDay, minute);
 	}
 }

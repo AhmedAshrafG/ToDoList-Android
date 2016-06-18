@@ -6,12 +6,12 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 /**
  * Created by ahmadz on 6/18/16.
  */
-public class DataTimeFactory {
-	private static DataTimeFactory mInstance;
+public class DialogFactory {
+	private static DialogFactory mInstance;
 
-	public synchronized static DataTimeFactory getInstance() {
+	public synchronized static DialogFactory getInstance() {
 		if (mInstance == null)
-			mInstance = new DataTimeFactory();
+			mInstance = new DialogFactory();
 		return mInstance;
 	}
 

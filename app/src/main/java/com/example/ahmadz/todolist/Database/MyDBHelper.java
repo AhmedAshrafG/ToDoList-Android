@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.ahmadz.todolist.Models.TodoDate;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 
 import java.util.ArrayList;
@@ -25,11 +26,16 @@ public class MyDBHelper extends SQLiteOpenHelper{
 	// Database Name
 	private static final String DATABASE_NAME = "TodoDB";
 	//Table Names
-	private String TABLE_TODO = "table_todo";
+	public static String TABLE_TODO = "table_todo";
 	//To-do Table Columns
-	private String COLUMN_ITEM_TITLE = "todo_title";
-	private String COLUMN_ITEM_BODY = "todo_body";
-	private String ID_COLUMN = "id";
+	public static String COLUMN_ITEM_TITLE = "todo_title";
+	public static String COLUMN_ITEM_BODY = "todo_body";
+	public static String ID_COLUMN = "id";
+	public static String COLUMN_ITEM_YEAR = "todo_year";
+	public static String COLUMN_ITEM_MONTH = "todo_month";
+	public static String COLUMN_ITEM_DAY = "todo_day";
+	public static String COLUMN_ITEM_HOUR = "todo_hour";
+	public static String COLUMN_ITEM_MINUTE = "todo_minute";
 
 	public static synchronized MyDBHelper getInstance(Context context) {
 		if (mInstance == null) {
@@ -74,7 +80,8 @@ public class MyDBHelper extends SQLiteOpenHelper{
 				String title = cur.getString(titleCol);
 				String body = cur.getString(bodyCol);
 
-				TodoItemModel todoItem = new TodoItemModel(id, title, body);
+				TodoDate todoDate = new TodoDate(cur);
+				TodoItemModel todoItem = new TodoItemModel(id, title, body, todoDate);
 				todoItems.add(todoItem);
 
 			} while (cur.moveToNext());
@@ -82,7 +89,6 @@ public class MyDBHelper extends SQLiteOpenHelper{
 
 		if (cur != null)
 			cur.close();
-
 		db.close();
 
 		return todoItems;
@@ -128,6 +134,37 @@ public class MyDBHelper extends SQLiteOpenHelper{
 		db.close();
 	}
 
+	public void editTodoDate(long item_id, int year, int month, int day){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_ITEM_YEAR, year);
+		cv.put(COLUMN_ITEM_MONTH, month);
+		cv.put(COLUMN_ITEM_DAY, day);
+
+		String table = TABLE_TODO;
+		String whereClause = ID_COLUMN + "=?";
+		String[] whereArgs = new String[] { String.valueOf(item_id) };
+
+		db.update(table, cv, whereClause, whereArgs);
+		db.close();
+	}
+
+	public void editTodoTime(long item_id, int hour, int minute){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_ITEM_HOUR, hour);
+		cv.put(COLUMN_ITEM_MINUTE, minute);
+
+		String table = TABLE_TODO;
+		String whereClause = ID_COLUMN + "=?";
+		String[] whereArgs = new String[] { String.valueOf(item_id) };
+
+		db.update(table, cv, whereClause, whereArgs);
+		db.close();
+	}
+
 	public void editTodoItemTitle(long item_id, String title){
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -147,13 +184,23 @@ public class MyDBHelper extends SQLiteOpenHelper{
 		String CREATE_TODO_TABLE = String.format("CREATE TABLE %s ( " +
 						"%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
 						"%s TEXT, " +
-						"%s TEXT DEFAULT '' " +
+						"%s TEXT DEFAULT '', " +
+						"%s INT, " +
+						"%s INT, " +
+						"%s INT, " +
+						"%s INT, " +
+						"%s INT " +
 						")"
 				,
 				TABLE_TODO,
 				ID_COLUMN,
 				COLUMN_ITEM_TITLE,
-				COLUMN_ITEM_BODY
+				COLUMN_ITEM_BODY,
+				COLUMN_ITEM_YEAR,
+				COLUMN_ITEM_MONTH,
+				COLUMN_ITEM_DAY,
+				COLUMN_ITEM_HOUR,
+				COLUMN_ITEM_MINUTE
 		);
 		db.execSQL(CREATE_TODO_TABLE);
 	}
