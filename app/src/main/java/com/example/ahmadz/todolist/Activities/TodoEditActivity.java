@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.ahmadz.todolist.Database.ContentProvider;
@@ -14,14 +15,14 @@ import com.example.ahmadz.todolist.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TodoEditActivity extends AppCompatActivity {
-	@Bind(R.id.toolbar)
-	Toolbar toolbar;
-	@Bind(R.id.et_title)
-	EditText title_field;
-	@Bind(R.id.et_body)
-	EditText body_field;
+	@Bind(R.id.toolbar) Toolbar toolbar;
+	@Bind(R.id.et_title) EditText title_field;
+	@Bind(R.id.et_body) EditText body_field;
+	@Bind(R.id.date_tv) TextView dateTv;
+	@Bind(R.id.time_tv) TextView timeTv;
 	private TodoItemModel todoItem;
 	private Context mContext;
 
@@ -71,6 +72,24 @@ public class TodoEditActivity extends AppCompatActivity {
 				.onPositive((dialog, which) -> saveStuffAndExit())
 				.onNegative((dialog1, which1) -> this.finish())
 				.show();
+	}
+
+	@OnClick(R.id.date_tv)
+	public void dateTvClicked(){
+		showDatePickerDialog();
+	}
+
+	private void showDatePickerDialog() {
+
+	}
+
+	@OnClick(R.id.time_tv)
+	public void timeTvClicked(){
+		showTimePickerDialog();
+	}
+
+	private void showTimePickerDialog() {
+
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class ContentProvider {
 	private static ContentProvider mInstance;
 	private Observable<List<TodoItemModel>> todoListObservable;
 
-	public static ContentProvider getInstance(Context context){
+	public synchronized static ContentProvider getInstance(Context context){
 		if (mInstance == null)
 			mInstance = new ContentProvider(context);
 

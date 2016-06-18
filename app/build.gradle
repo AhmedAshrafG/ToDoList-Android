@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.ahmadz.todolist"
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -30,6 +30,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.afollestad.material-dialogs:core:0.8.5.9'
     compile 'com.cocosw:bottomsheet:1.+@aar'
+    compile 'com.wdullaer:materialdatetimepicker:2.3.0'
 }
 
 retrolambda {
