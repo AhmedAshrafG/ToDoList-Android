@@ -22,6 +22,8 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.ParseException;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,7 +37,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Bind(R.id.date_tv) TextView dateTv;
 	@Bind(R.id.time_tv) TextView timeTv;
 	private TodoItemModel todoItem;
-	private TodoDate todoDate;
+	private TodoDate todoDateClone;
 	private Context mContext;
 	private DialogFactory mDialogFactory;
 	private DateHelper mDateHelper;
@@ -50,6 +52,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
 		mContext = this;
 		mFragManager = getFragmentManager();
@@ -67,13 +70,27 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 
 	private void setExtras() {
 		todoItem = (TodoItemModel) this.getIntent().getSerializableExtra(getString(R.string.extra_todo_model));
+		title_field.setText(todoItem.getTitle());
+		body_field.setText(todoItem.getBody());
+
 		try {
-			todoDate = (TodoDate) todoItem.getTodoDate().clone();
+			todoDateClone = (TodoDate) todoItem.getTodoDate().clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		title_field.setText(todoItem.getTitle());
-		body_field.setText(todoItem.getBody());
+
+
+		updateTVs();
+	}
+
+	private void updateTVs(){
+		try {
+			dateTv.setText(todoItem.getTodoDate().getDateFormatted());
+			timeTv.setText(todoItem.getTodoDate().getTimeFormatted());
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void saveStuffAndExit() {
@@ -118,7 +135,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		String body = body_field.getText().toString();
 		if (!todoItem.getBody().equals(body)
 				|| !todoItem.getTitle().equals(title)
-				|| !todoItem.getTodoDate().equals(todoDate))
+				|| !todoItem.getTodoDate().equals(todoDateClone))
 			showDialog();
 		else
 			this.finish();
@@ -127,13 +144,15 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Override
 	public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 		todoItem.getTodoDate().setDate(year, monthOfYear, dayOfMonth);
-		mContentProvider.editTodoItemDate(todoItem.getID(), year, monthOfYear, dayOfMonth);
+		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
+		updateTVs();
 	}
 
 	@Override
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-		todoItem.getTodoDate().setTime(hourOfDay, minute);
-		mContentProvider.editTodoItemTime(todoItem.getID(), hourOfDay, minute);
+		todoItem.getTodoDate().setTime(hourOfDay, minute, second);
+		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
+		updateTVs();
 	}
 
 	@Override

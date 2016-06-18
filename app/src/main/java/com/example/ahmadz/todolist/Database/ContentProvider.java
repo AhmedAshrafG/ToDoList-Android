@@ -59,11 +59,7 @@ public class ContentProvider {
 		mDBHelper.deleteTodoItem(id);
 	}
 
-	public void editTodoItemDate(long id, int year, int monthOfYear, int dayOfMonth) {
-		mDBHelper.editTodoDate(id, year, monthOfYear, dayOfMonth);
-	}
-
-	public void editTodoItemTime(long id, int hourOfDay, int minute) {
-		mDBHelper.editTodoTime(id, hourOfDay, minute);
+	public void editTodoItemTime(long id, long timeInMS) {
+		mDBHelper.editTodoTime(id, timeInMS);
 	}
 }

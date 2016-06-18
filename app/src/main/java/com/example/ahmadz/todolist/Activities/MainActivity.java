@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
+		getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
 		mContext = this;
 		provider = ContentProvider.getInstance(mContext);
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	private void addTodoItem(String todoTitle) {
 		long ID = provider.addTodoItem(todoTitle);
-		adapter.addItem(new TodoItemModel(ID, todoTitle, new TodoDate(null)));
+		adapter.addItem(new TodoItemModel(ID, todoTitle, new TodoDate()));
 		checkForEmptiness();
 	}
 

@@ -30,12 +30,8 @@ public class MyDBHelper extends SQLiteOpenHelper{
 	//To-do Table Columns
 	public static String COLUMN_ITEM_TITLE = "todo_title";
 	public static String COLUMN_ITEM_BODY = "todo_body";
+	public static String COLUMN_ITEM_TIME = "todo_time";
 	public static String ID_COLUMN = "id";
-	public static String COLUMN_ITEM_YEAR = "todo_year";
-	public static String COLUMN_ITEM_MONTH = "todo_month";
-	public static String COLUMN_ITEM_DAY = "todo_day";
-	public static String COLUMN_ITEM_HOUR = "todo_hour";
-	public static String COLUMN_ITEM_MINUTE = "todo_minute";
 
 	public static synchronized MyDBHelper getInstance(Context context) {
 		if (mInstance == null) {
@@ -74,13 +70,15 @@ public class MyDBHelper extends SQLiteOpenHelper{
 			int idCol = cur.getColumnIndex(ID_COLUMN);
 			int titleCol = cur.getColumnIndex(COLUMN_ITEM_TITLE);
 			int bodyCol = cur.getColumnIndex(COLUMN_ITEM_BODY);
+			int timeCol = cur.getColumnIndex(COLUMN_ITEM_TIME);
 
 			do {
 				long id = cur.getLong(idCol);
 				String title = cur.getString(titleCol);
 				String body = cur.getString(bodyCol);
+				long timeInMS = cur.getLong(timeCol);
 
-				TodoDate todoDate = new TodoDate(cur);
+				TodoDate todoDate = new TodoDate(timeInMS);
 				TodoItemModel todoItem = new TodoItemModel(id, title, body, todoDate);
 				todoItems.add(todoItem);
 
@@ -134,28 +132,11 @@ public class MyDBHelper extends SQLiteOpenHelper{
 		db.close();
 	}
 
-	public void editTodoDate(long item_id, int year, int month, int day){
+	public void editTodoTime(long item_id, long timeInMS){
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ITEM_YEAR, year);
-		cv.put(COLUMN_ITEM_MONTH, month);
-		cv.put(COLUMN_ITEM_DAY, day);
-
-		String table = TABLE_TODO;
-		String whereClause = ID_COLUMN + "=?";
-		String[] whereArgs = new String[] { String.valueOf(item_id) };
-
-		db.update(table, cv, whereClause, whereArgs);
-		db.close();
-	}
-
-	public void editTodoTime(long item_id, int hour, int minute){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ITEM_HOUR, hour);
-		cv.put(COLUMN_ITEM_MINUTE, minute);
+		cv.put(COLUMN_ITEM_TIME, timeInMS);
 
 		String table = TABLE_TODO;
 		String whereClause = ID_COLUMN + "=?";
@@ -185,22 +166,14 @@ public class MyDBHelper extends SQLiteOpenHelper{
 						"%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
 						"%s TEXT, " +
 						"%s TEXT DEFAULT '', " +
-						"%s INT, " +
-						"%s INT, " +
-						"%s INT, " +
-						"%s INT, " +
-						"%s INT " +
+						"%s INT DEFAULT -1" +
 						")"
 				,
 				TABLE_TODO,
 				ID_COLUMN,
 				COLUMN_ITEM_TITLE,
 				COLUMN_ITEM_BODY,
-				COLUMN_ITEM_YEAR,
-				COLUMN_ITEM_MONTH,
-				COLUMN_ITEM_DAY,
-				COLUMN_ITEM_HOUR,
-				COLUMN_ITEM_MINUTE
+				COLUMN_ITEM_TIME
 		);
 		db.execSQL(CREATE_TODO_TABLE);
 	}
