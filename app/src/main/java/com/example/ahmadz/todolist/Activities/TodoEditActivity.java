@@ -117,7 +117,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	private void showDatePickerDialog() {
-		mDateHelper.getDialog().show(mFragManager, dateTag);
+		mDateHelper.getDialog(todoItem.getTodoDate()).show(mFragManager, dateTag);
 	}
 
 	@OnClick(R.id.time_tv)
@@ -126,7 +126,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	private void showTimePickerDialog() {
-		mTimeHelper.getDialog().show(mFragManager, timeTag);
+		mTimeHelper.getDialog(todoItem.getTodoDate()).show(mFragManager, timeTag);
 	}
 
 	@Override

@@ -64,4 +64,20 @@ public class TodoDate implements Serializable, Cloneable{
 	public String getDateFormatted() throws ParseException {
 		return String.format("%s-%s-%s",mCal.get(Calendar.DAY_OF_MONTH) ,mCal.get(Calendar.MONTH)+1,mCal.get(Calendar.YEAR));
 	}
+
+	public int getYear() {
+		return mCal.get(Calendar.YEAR);
+	}
+	public int getMonth() {
+		return mCal.get(Calendar.MONTH);
+	}
+	public int getDay() {
+		return mCal.get(Calendar.DAY_OF_MONTH);
+	}
+	public int getHour() {
+		return mCal.get(Calendar.HOUR);
+	}
+	public int getMinute() {
+		return mCal.get(Calendar.MINUTE);
+	}
 }

@@ -2,8 +2,6 @@ package com.example.ahmadz.todolist.Models;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import java.util.Calendar;
-
 /**
  * Created by ahmadz on 6/18/16.
  */
@@ -20,12 +18,11 @@ public class DateHelper {
 		mDateDialog.setOnDateSetListener(listener);
 	}
 
-	public DatePickerDialog getDialog(){
-		Calendar now = Calendar.getInstance();
+	public DatePickerDialog getDialog(TodoDate todoDate){
 		return getDialog(
-				now.get(Calendar.YEAR),
-				now.get(Calendar.MONTH),
-				now.get(Calendar.DAY_OF_MONTH)
+				todoDate.getYear(),
+				todoDate.getMonth(),
+				todoDate.getDay()
 		);
 
 	}

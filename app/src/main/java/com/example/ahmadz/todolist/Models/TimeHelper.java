@@ -2,8 +2,6 @@ package com.example.ahmadz.todolist.Models;
 
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.util.Calendar;
-
 /**
  * Created by ahmadz on 6/18/16.
  */
@@ -20,17 +18,15 @@ public class TimeHelper {
 		mTimeDialog.setOnTimeSetListener(listener);
 	}
 
-	public TimePickerDialog getDialog(){
-		Calendar now = Calendar.getInstance();
+	public TimePickerDialog getDialog(TodoDate todoDate){
 		return getDialog(
-				now.get(Calendar.HOUR),
-				now.get(Calendar.MINUTE)
+				todoDate.getHour(),
+				todoDate.getMinute()
 		);
 	}
 
 	public TimePickerDialog getDialog(int hour, int minute){
-		if (mTimeDialog == null)
-			mTimeDialog = TimePickerDialog.newInstance(
+		mTimeDialog = TimePickerDialog.newInstance(
 					listener,
 					hour,
 					minute,
