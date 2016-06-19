@@ -1,13 +1,12 @@
 package com.example.ahmadz.todolist.Models;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.Calendar;
 
 /**
  * Created by ahmadz on 6/18/16.
  */
-public class TodoDate implements Serializable, Cloneable{
+public class TodoDate implements Serializable{
 	private final Calendar mCal;
 
 	public TodoDate(){
@@ -32,11 +31,6 @@ public class TodoDate implements Serializable, Cloneable{
 		return this.getTimeInMS() == that.getTimeInMS();
 	}
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
 	public long getTimeInMS() {
 		return mCal.getTimeInMillis();
 	}
@@ -57,11 +51,11 @@ public class TodoDate implements Serializable, Cloneable{
 		mCal.set(Calendar.SECOND, second);
 	}
 
-	public String getTimeFormatted() throws ParseException {
+	public String getTimeFormatted(){
 		return String.format("%s:%s",mCal.get(Calendar.HOUR),mCal.get(Calendar.MINUTE));
 	}
 
-	public String getDateFormatted() throws ParseException {
+	public String getDateFormatted(){
 		return String.format("%s-%s-%s",mCal.get(Calendar.DAY_OF_MONTH) ,mCal.get(Calendar.MONTH)+1,mCal.get(Calendar.YEAR));
 	}
 

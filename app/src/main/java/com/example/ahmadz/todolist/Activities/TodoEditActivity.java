@@ -15,14 +15,11 @@ import com.example.ahmadz.todolist.Database.ContentProvider;
 import com.example.ahmadz.todolist.Models.DateHelper;
 import com.example.ahmadz.todolist.Models.DialogFactory;
 import com.example.ahmadz.todolist.Models.TimeHelper;
-import com.example.ahmadz.todolist.Models.TodoDate;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
-import java.text.ParseException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,13 +34,13 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Bind(R.id.date_tv) TextView dateTv;
 	@Bind(R.id.time_tv) TextView timeTv;
 	private TodoItemModel todoItem;
-	private TodoDate todoDateClone;
 	private Context mContext;
 	private DialogFactory mDialogFactory;
 	private DateHelper mDateHelper;
 	private TimeHelper mTimeHelper;
 	private FragmentManager mFragManager;
 	private ContentProvider mContentProvider;
+	private long timeWhenGotHere;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,25 +69,14 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		todoItem = (TodoItemModel) this.getIntent().getSerializableExtra(getString(R.string.extra_todo_model));
 		title_field.setText(todoItem.getTitle());
 		body_field.setText(todoItem.getBody());
-
-		try {
-			todoDateClone = (TodoDate) todoItem.getTodoDate().clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-
+		timeWhenGotHere = todoItem.getTodoDate().getTimeInMS();
 
 		updateTVs();
 	}
 
 	private void updateTVs(){
-		try {
-			dateTv.setText(todoItem.getTodoDate().getDateFormatted());
-			timeTv.setText(todoItem.getTodoDate().getTimeFormatted());
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		dateTv.setText(todoItem.getTodoDate().getDateFormatted());
+		timeTv.setText(todoItem.getTodoDate().getTimeFormatted());
 	}
 
 	private void saveStuffAndExit() {
@@ -136,7 +122,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		String body = body_field.getText().toString();
 		if (!todoItem.getBody().equals(body)
 				|| !todoItem.getTitle().equals(title)
-				|| !todoItem.getTodoDate().equals(todoDateClone))
+				|| !(todoItem.getTodoDate().getTimeInMS() == timeWhenGotHere))
 			showDialog();
 		else
 			this.finish();
