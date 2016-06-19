@@ -9,7 +9,9 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
               app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              tools:showIn="@layout/activity_todo_edit">
+              tools:showIn="@layout/activity_todo_edit"
+              android:padding="10dp"
+    >
 
     <LinearLayout
         android:orientation="horizontal"
@@ -20,7 +22,7 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Date"
@@ -30,7 +32,7 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Time"
@@ -49,22 +51,24 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
+            android:text="10-12-2016"
             android:id="@+id/date_tv"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:padding="10dp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
+            android:text="9:30"
             android:id="@+id/time_tv"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:padding="10dp"/>
     </LinearLayout>
 
     <EditText
@@ -73,7 +77,8 @@
         android:id="@+id/et_title"
         android:layout_gravity="center_horizontal"
         android:gravity="start|left"
-        android:hint="Title.."/>
+        android:hint="Title.."
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="match_parent"

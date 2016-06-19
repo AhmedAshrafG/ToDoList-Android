@@ -97,6 +97,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		String title = title_field.getText().toString();
 		String body = body_field.getText().toString();
 		mContentProvider.editTodoItem(todoItem.getID(), title, body);
+		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
 		this.finish();
 	}
 
@@ -144,14 +145,12 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Override
 	public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 		todoItem.getTodoDate().setDate(year, monthOfYear, dayOfMonth);
-		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
 		updateTVs();
 	}
 
 	@Override
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
 		todoItem.getTodoDate().setTime(hourOfDay, minute, second);
-		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
 		updateTVs();
 	}
 
