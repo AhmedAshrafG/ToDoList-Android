@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
+import com.example.ahmadz.todolist.Models.TodoDate;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
 
@@ -25,8 +26,10 @@ public class TodoListAdapter extends BaseAdapter {
 	private List<TodoItemModel> todoItems;
 	private LayoutInflater inflater;
 	private TodoItemListener todoItemListener;
+	private Context mContext;
 
 	public TodoListAdapter(Context mContext, List<TodoItemModel> todoItems, TodoItemListener todoItemListener){
+		this.mContext = mContext;
 		inflater = LayoutInflater.from(mContext);
 		this.todoItems = todoItems;
 		this.todoItemListener = todoItemListener;
@@ -66,7 +69,10 @@ public class TodoListAdapter extends BaseAdapter {
 		//set tags.
 		viewHolder.setAllTag(position);
 		//set values.
-		viewHolder.setTitle(getTodoItem(position).getTitle());
+		TodoItemModel todoItem = getTodoItem(position);
+		viewHolder.setTitle(todoItem.getTitle());
+		viewHolder.setDate(todoItem.getTodoDate());
+		viewHolder.setPriority(todoItem.getPriority());
 		//long click callback trigger.
 		viewHolder.itemContainer.setOnLongClickListener(v -> {
 			int tag = (int)v.getTag();
@@ -125,24 +131,47 @@ public class TodoListAdapter extends BaseAdapter {
 		return todoItems.get(position);
 	}
 
-	static class ViewHolder{
-		@Bind(R.id.title_tv)
-		TextView itemTitle;
-		@Bind(R.id.text_container)
-		View itemContainer;
-		@Bind(R.id.btn_remove)
-		ImageButton removeBtn;
+	class ViewHolder{
+		@Bind(R.id.title_tv) TextView titleField;
+		@Bind(R.id.date_tv) TextView dateField;
+		@Bind(R.id.priority_tv) TextView priorityField;
+		@Bind(R.id.text_container) View itemContainer;
+		@Bind(R.id.btn_remove) ImageButton removeBtn;
 
 		public ViewHolder(View view){
 			ButterKnife.bind(this, view);
 		}
 
 		public void setTitle(String title) {
-			itemTitle.setText(title);
+			titleField.setText(title);
+		}
+
+		public void setDate(TodoDate todoDate){
+			dateField.setText(todoDate.getDateAndTimeFormatted());
+		}
+
+		public void setPriority(int priority){
+			switch (priority){
+				case 0:
+					priorityField.setText("Low");
+					priorityField.setTextColor(mContext.getResources().getColor(R.color.low));
+					break;
+				case 1:
+					priorityField.setText("Medium");
+					priorityField.setTextColor(mContext.getResources().getColor(R.color.medium));
+					break;
+				case 2:
+					priorityField.setText("High");
+					priorityField.setTextColor(mContext.getResources().getColor(R.color.high));
+					break;
+
+			}
 		}
 
 		public void setAllTag(int position){
-			itemTitle.setTag(position);
+			titleField.setTag(position);
+			dateField.setTag(position);
+			priorityField.setTag(position);
 			itemContainer.setTag(position);
 			removeBtn.setTag(position);
 		}

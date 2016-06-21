@@ -52,11 +52,11 @@ public class TodoDate implements Serializable{
 	}
 
 	public String getTimeFormatted(){
-		return String.format("%s:%s",mCal.get(Calendar.HOUR),mCal.get(Calendar.MINUTE));
+		return String.format("%02d:%02d",mCal.get(Calendar.HOUR),mCal.get(Calendar.MINUTE));
 	}
 
 	public String getDateFormatted(){
-		return String.format("%s-%s-%s",mCal.get(Calendar.DAY_OF_MONTH) ,mCal.get(Calendar.MONTH)+1,mCal.get(Calendar.YEAR));
+		return String.format("%02d-%02d-%04d",mCal.get(Calendar.DAY_OF_MONTH) ,mCal.get(Calendar.MONTH)+1,mCal.get(Calendar.YEAR));
 	}
 
 	public int getYear() {
@@ -73,5 +73,9 @@ public class TodoDate implements Serializable{
 	}
 	public int getMinute() {
 		return mCal.get(Calendar.MINUTE);
+	}
+
+	public String getDateAndTimeFormatted() {
+		return getDateFormatted() + "\n" + getTimeFormatted();
 	}
 }

@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -24,6 +25,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 
 public class TodoEditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 	private String dateTag = "dateDialog";
@@ -33,6 +35,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Bind(R.id.et_body) EditText body_field;
 	@Bind(R.id.date_tv) TextView dateTv;
 	@Bind(R.id.time_tv) TextView timeTv;
+	@Bind(R.id.priority_spinner) Spinner prioritySpinner;
 	private TodoItemModel todoItem;
 	private Context mContext;
 	private DialogFactory mDialogFactory;
@@ -41,6 +44,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	private FragmentManager mFragManager;
 	private ContentProvider mContentProvider;
 	private long timeWhenGotHere;
+	private int priorityWhenGotHere;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,8 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		title_field.setText(todoItem.getTitle());
 		body_field.setText(todoItem.getBody());
 		timeWhenGotHere = todoItem.getTodoDate().getTimeInMS();
+		priorityWhenGotHere = todoItem.getPriority();
+		prioritySpinner.setSelection(priorityWhenGotHere);
 
 		updateTVs();
 	}
@@ -84,6 +90,8 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		String body = body_field.getText().toString();
 		mContentProvider.editTodoItem(todoItem.getID(), title, body);
 		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
+		mContentProvider.editTodoItemPriority(todoItem.getID(), todoItem.getPriority());
+
 		this.finish();
 	}
 
@@ -122,7 +130,8 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		String body = body_field.getText().toString();
 		if (!todoItem.getBody().equals(body)
 				|| !todoItem.getTitle().equals(title)
-				|| !(todoItem.getTodoDate().getTimeInMS() == timeWhenGotHere))
+				|| !(todoItem.getTodoDate().getTimeInMS() == timeWhenGotHere)
+				|| priorityWhenGotHere != todoItem.getPriority())
 			showDialog();
 		else
 			this.finish();
@@ -138,6 +147,11 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
 		todoItem.getTodoDate().setTime(hourOfDay, minute, second);
 		updateTVs();
+	}
+
+	@OnItemSelected(R.id.priority_spinner)
+	public void onPrioritySpinnerItemSelected(int position){
+		todoItem.setPriority(position);
 	}
 
 	@Override

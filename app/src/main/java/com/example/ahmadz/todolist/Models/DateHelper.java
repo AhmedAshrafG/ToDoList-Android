@@ -28,13 +28,12 @@ public class DateHelper {
 	}
 
 	public DatePickerDialog getDialog(int year, int month, int day){
-		if (mDateDialog == null)
-			mDateDialog = DatePickerDialog.newInstance(
-					listener,
-					year,
-					month,
-					day
-			);
+		mDateDialog = DatePickerDialog.newInstance(
+				listener,
+				year,
+				month,
+				day
+		);
 		return mDateDialog;
 	}
 }

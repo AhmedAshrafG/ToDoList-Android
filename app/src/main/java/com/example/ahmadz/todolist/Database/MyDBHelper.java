@@ -31,6 +31,7 @@ public class MyDBHelper extends SQLiteOpenHelper{
 	public static String COLUMN_ITEM_TITLE = "todo_title";
 	public static String COLUMN_ITEM_BODY = "todo_body";
 	public static String COLUMN_ITEM_TIME = "todo_time";
+	public static String COLUMN_ITEM_PRIORITY = "todo_priority";
 	public static String ID_COLUMN = "id";
 
 	public static synchronized MyDBHelper getInstance(Context context) {
@@ -55,7 +56,8 @@ public class MyDBHelper extends SQLiteOpenHelper{
 
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cur = db.rawQuery(
-				String.format("select * from %s", TABLE_TODO),
+				String.format("select * from %s order by %s DESC, %s ASC",
+						TABLE_TODO, COLUMN_ITEM_PRIORITY, COLUMN_ITEM_TIME),
 				null
 		);
 
@@ -71,15 +73,17 @@ public class MyDBHelper extends SQLiteOpenHelper{
 			int titleCol = cur.getColumnIndex(COLUMN_ITEM_TITLE);
 			int bodyCol = cur.getColumnIndex(COLUMN_ITEM_BODY);
 			int timeCol = cur.getColumnIndex(COLUMN_ITEM_TIME);
+			int priorityCol = cur.getColumnIndex(COLUMN_ITEM_PRIORITY);
 
 			do {
 				long id = cur.getLong(idCol);
 				String title = cur.getString(titleCol);
 				String body = cur.getString(bodyCol);
 				long timeInMS = cur.getLong(timeCol);
+				int priority = cur.getInt(priorityCol);
 
 				TodoDate todoDate = new TodoDate(timeInMS);
-				TodoItemModel todoItem = new TodoItemModel(id, title, body, todoDate);
+				TodoItemModel todoItem = new TodoItemModel(id, title, body, priority, todoDate);
 				todoItems.add(todoItem);
 
 			} while (cur.moveToNext());
@@ -160,20 +164,36 @@ public class MyDBHelper extends SQLiteOpenHelper{
 		db.close();
 	}
 
+	public void editTodoItemPriority(long item_id, int priority) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_ITEM_PRIORITY, priority);
+
+		String table = TABLE_TODO;
+		String whereClause = ID_COLUMN + "=?";
+		String[] whereArgs = new String[] { String.valueOf(item_id) };
+
+		db.update(table, cv, whereClause, whereArgs);
+		db.close();
+	}
+
 	private void createTables(SQLiteDatabase db) {
 		// Fragment
 		String CREATE_TODO_TABLE = String.format("CREATE TABLE %s ( " +
 						"%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
 						"%s TEXT, " +
 						"%s TEXT DEFAULT '', " +
-						"%s INT DEFAULT -1" +
+						"%s INT DEFAULT -1, " +
+						"%s INT DEFAULT 2" +
 						")"
 				,
 				TABLE_TODO,
 				ID_COLUMN,
 				COLUMN_ITEM_TITLE,
 				COLUMN_ITEM_BODY,
-				COLUMN_ITEM_TIME
+				COLUMN_ITEM_TIME,
+				COLUMN_ITEM_PRIORITY
 		);
 		db.execSQL(CREATE_TODO_TABLE);
 	}

@@ -27,11 +27,11 @@ public class TimeHelper {
 
 	public TimePickerDialog getDialog(int hour, int minute){
 		mTimeDialog = TimePickerDialog.newInstance(
-					listener,
-					hour,
-					minute,
-					true
-			);
+				listener,
+				hour,
+				minute,
+				true
+		);
 		return mTimeDialog;
 	}
 }

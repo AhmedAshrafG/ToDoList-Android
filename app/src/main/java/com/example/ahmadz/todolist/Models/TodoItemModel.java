@@ -10,15 +10,17 @@ public class TodoItemModel implements Serializable{
 	private String title;
 	private String body;
 	private TodoDate todoDate;
+	private int priority;
 
 	public TodoItemModel(long ID, String title, TodoDate todoDate){
-		this(ID, title, "", todoDate);
+		this(ID, title, "", 2, todoDate);
 	}
 
-	public TodoItemModel(long ID, String title, String body, TodoDate todoDate){
+	public TodoItemModel(long ID, String title, String body, int priority, TodoDate todoDate){
 		this.title = title;
 		this.body = body;
 		this.ID = ID;
+		this.priority = priority;
 		this.todoDate = todoDate;
 	}
 
@@ -32,10 +34,6 @@ public class TodoItemModel implements Serializable{
 
 	public String getBody() {
 		return body;
-	}
-
-	public void setBody(String body) {
-		this.body = body;
 	}
 
 	public long getID() {
@@ -56,7 +54,11 @@ public class TodoItemModel implements Serializable{
 		return todoDate;
 	}
 
-	public void setTodoDate(TodoDate todoDate) {
-		this.todoDate = todoDate;
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 }

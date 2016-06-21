@@ -58,7 +58,9 @@
             android:id="@+id/date_tv"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"/>
 
         <TextView
             android:layout_width="0dp"
@@ -68,13 +70,47 @@
             android:id="@+id/time_tv"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"/>
     </LinearLayout>
+
+    <View style="@style/Divider"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Priority :"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:id="@+id/textView3"
+            android:layout_gravity="center"/>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/priority_spinner"
+            android:layout_weight="1"
+            android:entries="@array/priority_array"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <View style="@style/Divider"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/et_title"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:gravity="start|left"
         android:hint="Title.."

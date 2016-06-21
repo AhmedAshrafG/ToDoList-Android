@@ -6,4 +6,7 @@
     <color name="colorPrimaryDark">#358751</color>
     <color name="colorAccent">#4ccec5</color>
     <color name="dialogColor">#41875c</color>
+    <color name="low">#5ea3e7</color>
+    <color name="medium">#faa944</color>
+    <color name="high">#f56d8d</color>
 </resources>

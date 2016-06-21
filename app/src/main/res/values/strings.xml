@@ -5,4 +5,10 @@
     <string name="extra_todo_model">todo_model</string>
     <string name="not_set">Not Set</string>
     <string name="menu_save">Save</string>
+
+    <string-array name="priority_array">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
 </resources>

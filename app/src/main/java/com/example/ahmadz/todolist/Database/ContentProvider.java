@@ -62,4 +62,8 @@ public class ContentProvider {
 	public void editTodoItemTime(long id, long timeInMS) {
 		mDBHelper.editTodoTime(id, timeInMS);
 	}
+
+	public void editTodoItemPriority(long id, int priority) {
+		mDBHelper.editTodoItemPriority(id, priority);
+	}
 }
