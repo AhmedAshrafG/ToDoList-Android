@@ -18,7 +18,7 @@ public class TimeHelper {
 		mTimeDialog.setOnTimeSetListener(listener);
 	}
 
-	public TimePickerDialog getDialog(TodoDate todoDate){
+	public TimePickerDialog getDialog(TodoItemModel todoDate){
 		return getDialog(
 				todoDate.getHour(),
 				todoDate.getMinute()

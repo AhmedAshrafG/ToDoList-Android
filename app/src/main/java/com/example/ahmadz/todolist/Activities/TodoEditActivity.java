@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -12,15 +13,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.ahmadz.todolist.Database.ContentProvider;
 import com.example.ahmadz.todolist.Models.DateHelper;
 import com.example.ahmadz.todolist.Models.DialogFactory;
 import com.example.ahmadz.todolist.Models.TimeHelper;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,15 +45,18 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	@Bind(R.id.date_tv) TextView dateTv;
 	@Bind(R.id.time_tv) TextView timeTv;
 	@Bind(R.id.priority_spinner) Spinner prioritySpinner;
+
+	private String TAG = this.getClass().getSimpleName();
 	private TodoItemModel todoItem;
 	private Context mContext;
 	private DialogFactory mDialogFactory;
 	private DateHelper mDateHelper;
 	private TimeHelper mTimeHelper;
 	private FragmentManager mFragManager;
-	private ContentProvider mContentProvider;
 	private long timeWhenGotHere;
 	private int priorityWhenGotHere;
+	private DatabaseReference mTodoListNode;
+	private String todoUID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +69,52 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 
 		mContext = this;
 		mFragManager = getFragmentManager();
-		mContentProvider = ContentProvider.getInstance(mContext);
 
+		setupFireBaseDB();
 		setExtras();
 		setupDialogs();
+		setupTestListeners();
+	}
+
+	private void setupTestListeners() {
+		mTodoListNode.addChildEventListener(new ChildEventListener() {
+			@Override
+			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+				Log.i(TAG, "onChildAdded: " + dataSnapshot.toString() + " " + s);
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+				Log.i(TAG, "onChildChanged: " + dataSnapshot.toString() + " " + s);
+			}
+
+			@Override
+			public void onChildRemoved(DataSnapshot dataSnapshot) {
+				Log.i(TAG, "onChildRemoved: " + dataSnapshot.toString());
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+				Log.i(TAG, "onChildMoved: " + dataSnapshot.toString() + " " + s);
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+				Log.i(TAG, "onCancelled: " + databaseError.getMessage());
+			}
+		});
+	}
+
+	private void setupFireBaseDB() {
+		String userUID = FirebaseAuth.getInstance()
+				.getCurrentUser()
+				.getUid();
+
+		String USERS = getString(R.string.users_node);
+		mTodoListNode = FirebaseDatabase.getInstance()
+				.getReference(USERS)
+				.child(userUID)
+				.child(getString(R.string.todo_list_node));
 	}
 
 	private void setupDialogs() {
@@ -73,24 +127,32 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		todoItem = (TodoItemModel) this.getIntent().getSerializableExtra(getString(R.string.extra_todo_model));
 		title_field.setText(todoItem.getTitle());
 		body_field.setText(todoItem.getBody());
-		timeWhenGotHere = todoItem.getTodoDate().getTimeInMS();
+		timeWhenGotHere = todoItem.getTimeInMS();
 		priorityWhenGotHere = todoItem.getPriority();
 		prioritySpinner.setSelection(priorityWhenGotHere);
+		todoUID = this.getIntent().getStringExtra(getString(R.string.UID));
 
 		updateTVs();
 	}
 
 	private void updateTVs(){
-		dateTv.setText(todoItem.getTodoDate().getDateFormatted());
-		timeTv.setText(todoItem.getTodoDate().getTimeFormatted());
+		dateTv.setText(todoItem.getDateFormatted());
+		timeTv.setText(todoItem.getTimeFormatted());
 	}
 
 	private void saveStuffAndExit() {
 		String title = title_field.getText().toString();
 		String body = body_field.getText().toString();
-		mContentProvider.editTodoItem(todoItem.getID(), title, body);
-		mContentProvider.editTodoItemTime(todoItem.getID(), todoItem.getTodoDate().getTimeInMS());
-		mContentProvider.editTodoItemPriority(todoItem.getID(), todoItem.getPriority());
+		int priority = prioritySpinner.getSelectedItemPosition();
+		long timeInMS = todoItem.getTimeInMS();
+
+		Map <String, Object> map = new HashMap<>();
+		map.put(getString(R.string.todo_title), title);
+		map.put(getString(R.string.todo_body), body);
+		map.put(getString(R.string.todo_priority), priority);
+		map.put(getString(R.string.todo_timeInMS), timeInMS);
+
+		mTodoListNode.child(todoUID).updateChildren(map);
 
 		this.finish();
 	}
@@ -112,7 +174,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	private void showDatePickerDialog() {
-		mDateHelper.getDialog(todoItem.getTodoDate()).show(mFragManager, dateTag);
+		mDateHelper.getDialog(todoItem).show(mFragManager, dateTag);
 	}
 
 	@OnClick(R.id.time_tv)
@@ -121,31 +183,37 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	private void showTimePickerDialog() {
-		mTimeHelper.getDialog(todoItem.getTodoDate()).show(mFragManager, timeTag);
+		mTimeHelper.getDialog(todoItem).show(mFragManager, timeTag);
 	}
 
 	@Override
 	public void onBackPressed() {
-		String title = title_field.getText().toString();
-		String body = body_field.getText().toString();
-		if (!todoItem.getBody().equals(body)
-				|| !todoItem.getTitle().equals(title)
-				|| !(todoItem.getTodoDate().getTimeInMS() == timeWhenGotHere)
-				|| priorityWhenGotHere != todoItem.getPriority())
+		if (valuesChanged())
 			showDialog();
 		else
 			this.finish();
 	}
 
+	private boolean valuesChanged() {
+		String title = title_field.getText().toString();
+		String body = body_field.getText().toString();
+
+		return
+				!todoItem.getBody().equals(body)
+				|| !todoItem.getTitle().equals(title)
+				|| todoItem.getTimeInMS() != timeWhenGotHere
+				|| priorityWhenGotHere != todoItem.getPriority();
+	}
+
 	@Override
 	public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-		todoItem.getTodoDate().setDate(year, monthOfYear, dayOfMonth);
+		todoItem.setDate(year, monthOfYear, dayOfMonth);
 		updateTVs();
 	}
 
 	@Override
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-		todoItem.getTodoDate().setTime(hourOfDay, minute, second);
+		todoItem.setTime(hourOfDay, minute, second);
 		updateTVs();
 	}
 

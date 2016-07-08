@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.ahmadz.todolist.Models.TodoDate;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 
 import java.util.ArrayList;
@@ -82,8 +81,7 @@ public class MyDBHelper extends SQLiteOpenHelper{
 				long timeInMS = cur.getLong(timeCol);
 				int priority = cur.getInt(priorityCol);
 
-				TodoDate todoDate = new TodoDate(timeInMS);
-				TodoItemModel todoItem = new TodoItemModel(id, title, body, priority, todoDate);
+				TodoItemModel todoItem = new TodoItemModel();
 				todoItems.add(todoItem);
 
 			} while (cur.moveToNext());

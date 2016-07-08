@@ -1,10 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".Activities.MainActivity">
+      tools:context="com.example.ahmadz.firebase.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:title="@string/action_settings"
-        app:showAsAction="never"/>
+        app:showAsAction="never|withText"/>
+    <item
+        android:id="@+id/action_signout"
+        android:orderInCategory="0"
+        android:title="@string/action_logout"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        app:showAsAction="always"/>
 </menu>

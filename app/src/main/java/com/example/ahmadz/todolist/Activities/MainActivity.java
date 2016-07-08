@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,35 +21,32 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ahmadz.todolist.Adapters.TodoListAdapter;
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
-import com.example.ahmadz.todolist.Database.ContentProvider;
-import com.example.ahmadz.todolist.Models.TodoDate;
+import com.example.ahmadz.todolist.Models.RecyclerViewHolder;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements TodoItemListener {
 
 	private final String TAG = this.getClass().getSimpleName();
-	@Bind(R.id.toolbar)
-	Toolbar toolbar;
-	@Bind(R.id.todo_lv)
-	ListView todoLv;
-	@Bind(R.id.progressBar)
-	ProgressBar progressBar;
-	@Bind(R.id.empty_message)
-	TextView emptyMessage;
+	@Bind(R.id.toolbar) Toolbar toolbar;
+	@Bind(R.id.todo_lv) RecyclerView todoLv;
+	@Bind(R.id.progressBar) ProgressBar progressBar;
+	@Bind(R.id.empty_message) TextView emptyMessage;
+
 	private Context mContext;
-	private TodoListAdapter adapter;
-	private ContentProvider provider;
+	private FirebaseAuth mAuth;
+	private FirebaseRecyclerAdapter<TodoItemModel, RecyclerViewHolder> adapter;
+	private DatabaseReference mUserDB;
+	private FirebaseAuth.AuthStateListener authListener;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,39 +57,56 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 		getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
 		mContext = this;
-		provider = ContentProvider.getInstance(mContext);
-		adapter = new TodoListAdapter(mContext, new ArrayList<>(), this);
+		FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+		setupAuthentication();
+
+		if (mAuth.getCurrentUser() != null){
+			setupFireBaseDB();
+			setupFireBaseUI();
+			checkForEmptiness();
+		}
+	}
+
+	private void setupAuthentication() {
+		mAuth = FirebaseAuth.getInstance();
+
+		authListener = fireBaseAuth -> {
+			Log.i(TAG, "setupAuthentication: done");
+			FirebaseUser user = fireBaseAuth.getCurrentUser();
+			if (user == null) {
+				startActivity(new Intent(MainActivity.this, LoginActivity.class));
+				finish();
+			}
+		};
+	}
+
+	private void setupFireBaseDB() {
+		String mUserUID = mAuth.getCurrentUser().getUid();
+		mUserDB = FirebaseDatabase.getInstance()
+				.getReference(getString(R.string.users_node))
+				.child(mUserUID);
+	}
+
+	private void setupFireBaseUI() {
+		todoLv.setHasFixedSize(true);
+		todoLv.setLayoutManager(new LinearLayoutManager(this));
+
+		adapter = new TodoListAdapter(
+				mContext,
+				this,
+				TodoItemModel.class,
+				R.layout.todo_item_layout,
+				RecyclerViewHolder.class,
+				mUserDB.child(getString(R.string.todo_list_node))
+		);
 		todoLv.setAdapter(adapter);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		loadItems();
-	}
-
-	private void loadItems() {
-		progressBar.setVisibility(View.VISIBLE);
-
-		provider.getTodoListObservable().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.computation()).
-				subscribe(new Observer<List<TodoItemModel>>() {
-					@Override
-					public void onCompleted() {
-						progressBar.setVisibility(View.INVISIBLE);
-						checkForEmptiness();
-					}
-
-					@Override
-					public void onError(Throwable e) {
-						progressBar.setVisibility(View.INVISIBLE);
-						Log.i(TAG, "onError: " + e.getMessage());
-					}
-
-					@Override
-					public void onNext(List<TodoItemModel> todoItemModels) {
-						adapter.setData(todoItemModels);
-					}
-				});
+		mAuth.addAuthStateListener(authListener);
 	}
 
 	@OnClick(R.id.fab)
@@ -99,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 		showMaterialDialog(-1, "");
 	}
 
-	private void showMaterialDialog(long ID, String oldName) {
+	private void showMaterialDialog(int position, String oldName) {
 		// shows a material dialog that accepts input and receives it in a listener.
 		new MaterialDialog.Builder(mContext)
 				.title("ToDo")
@@ -118,23 +133,22 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 					}else {
 						//adding a new item.
-						if (ID == -1)
+						if (oldName.equals(""))
 							addTodoItem(todoTitle);
 							//editing an existing item.
 						else
-							editTodoItem(ID, todoTitle);
+							editTodoItem(position, todoTitle);
 					}
 				}).show();
 	}
 
-	private void editTodoItem(long ID, String todoTitle) {
-		adapter.editItemTitle(ID, todoTitle);
-		provider.editTodoItemTitle(ID, todoTitle);
+	private void editTodoItem(int position, String todoTitle) {
+		adapter.getRef(position).child(getString(R.string.todo_title)).setValue(todoTitle);
 	}
 
 	private void addTodoItem(String todoTitle) {
-		long ID = provider.addTodoItem(todoTitle);
-		adapter.addItem(new TodoItemModel(ID, todoTitle, new TodoDate()));
+		TodoItemModel todoItem = new TodoItemModel(todoTitle);
+		mUserDB.child(getString(R.string.todo_list_node)).push().setValue(todoItem);
 		checkForEmptiness();
 	}
 
@@ -146,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 				.listener((dialog, which) -> {
 					switch (which) {
 						case R.id.menu_item_edit:
-							TodoItemModel todoItem = adapter.getTodoItem(position);
-							showMaterialDialog(todoItem.getID(), todoItem.getTitle());
+							TodoItemModel todoItem = adapter.getItem(position);
+							showMaterialDialog(position, todoItem.getTitle());
 							break;
 						case R.id.menu_item_delete:
 							showDeleteDialog(position);
@@ -156,14 +170,8 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 				}).show();
 	}
 
-	private void deleteTodoItem(int position) {
-		provider.deleteTodoItem(adapter.getTodoItem(position).getID());
-		adapter.removeItem(position);
-		checkForEmptiness();
-	}
-
 	private void checkForEmptiness() {
-		if (adapter.getCount() > 0)
+		if (true/*adapter.getItemCount() > 0*/)
 			emptyMessage.setVisibility(View.INVISIBLE);
 		else
 			emptyMessage.setVisibility(View.VISIBLE);
@@ -172,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 	@Override
 	public void itemSinglePressed(int position) {
 		Intent intent = new Intent(mContext, TodoEditActivity.class);
-		intent.putExtra(getString(R.string.extra_todo_model), adapter.getTodoItem(position));
+		intent.putExtra(getString(R.string.extra_todo_model), adapter.getItem(position));
+		intent.putExtra(getString(R.string.UID), adapter.getRef(position).getKey());
 		startActivity(intent);
 	}
 
@@ -191,6 +200,11 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 				.show();
 	}
 
+	private void deleteTodoItem(int position) {
+		adapter.getRef(position).removeValue();
+		checkForEmptiness();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -199,13 +213,35 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-
-		if (id == R.id.action_settings) {
-			Toast.makeText(this, "Not yet implemented!", Toast.LENGTH_SHORT).show();
-			return true;
+		switch (item.getItemId()){
+			case R.id.action_signout:
+				signOut();
+				break;
+			case R.id.action_settings:
+				Toast.makeText(this, "Not yet Implemented!", Toast.LENGTH_SHORT).show();
+				break;
 		}
-
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void signOut() {
+		new MaterialDialog.Builder(this)
+				.title("Log-Out")
+				.content("Are you sure you wanna Logout?")
+				.positiveText("Yes")
+				.negativeText("Cancel")
+				.onPositive((dialog, which) -> signMeOut())
+				.show();
+	}
+
+	public void signMeOut(){
+		mAuth.signOut();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (authListener != null)
+			mAuth.removeAuthStateListener(authListener);
 	}
 }

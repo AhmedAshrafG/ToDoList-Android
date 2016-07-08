@@ -18,7 +18,7 @@ public class DateHelper {
 		mDateDialog.setOnDateSetListener(listener);
 	}
 
-	public DatePickerDialog getDialog(TodoDate todoDate){
+	public DatePickerDialog getDialog(TodoItemModel todoDate){
 		return getDialog(
 				todoDate.getYear(),
 				todoDate.getMonth(),

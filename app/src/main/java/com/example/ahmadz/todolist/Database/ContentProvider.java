@@ -43,8 +43,8 @@ public class ContentProvider {
 		return todoListObservable;
 	}
 
-	public long addTodoItem(String todoTitle) {
-		return mDBHelper.addTodoItem(todoTitle);
+	public TodoItemModel addTodoItem(String todoTitle) {
+		return new TodoItemModel(todoTitle);
 	}
 
 	public void editTodoItemTitle(long id, String todoTitle) {
