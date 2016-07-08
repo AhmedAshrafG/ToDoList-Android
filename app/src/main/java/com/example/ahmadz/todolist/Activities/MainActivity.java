@@ -110,12 +110,13 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 					@Override
 					public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+						Log.i(TAG, "onChildMoved: ");
 					}
 
 					@Override
 					public void onCancelled(DatabaseError databaseError) {
-
+						Log.i(TAG, "onCancelled: " + databaseError.getMessage());
+						progressBar.setVisibility(View.INVISIBLE);
 					}
 				});
 	}
