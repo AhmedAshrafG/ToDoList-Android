@@ -152,6 +152,7 @@ public class TodoEditActivity extends AppCompatActivity implements DatePickerDia
 		map.put(getString(R.string.todo_priority), priority);
 		map.put(getString(R.string.todo_timeInMS), timeInMS);
 
+		mTodoListNode.child(todoUID).setPriority(priority);
 		mTodoListNode.child(todoUID).updateChildren(map);
 
 		this.finish();

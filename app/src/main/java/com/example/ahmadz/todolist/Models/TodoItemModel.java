@@ -15,13 +15,14 @@ public class TodoItemModel implements Serializable{
 	private long timeInMS;
 	@Exclude
 	private final Calendar mCal;
+	public static int DEFAULT_PRIORITY = 1;
 
 	public TodoItemModel(){
 		this("");
 	}
 
 	public TodoItemModel(String title){
-		this(title, "", 1, -1);
+		this(title, "", TodoItemModel.DEFAULT_PRIORITY, -1);
 	}
 
 	public TodoItemModel(String title, String body, int priority, long timeInMS){

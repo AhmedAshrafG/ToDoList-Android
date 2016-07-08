@@ -6,7 +6,7 @@ import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
 import com.example.ahmadz.todolist.Models.RecyclerViewHolder;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 /**
  * Created by ahmadz on 3/7/16.
@@ -15,7 +15,7 @@ public class TodoListAdapter extends FirebaseRecyclerAdapter<TodoItemModel, Recy
 	private TodoItemListener todoItemListener;
 	private Context mContext;
 
-	public TodoListAdapter(Context mContext, TodoItemListener todoItemListener, Class<TodoItemModel> todoItemModelClass, int todo_item_layout, Class<RecyclerViewHolder> recyclerViewHolderClass, DatabaseReference child) {
+	public TodoListAdapter(Context mContext, TodoItemListener todoItemListener, Class<TodoItemModel> todoItemModelClass, int todo_item_layout, Class<RecyclerViewHolder> recyclerViewHolderClass, Query child) {
 		super(todoItemModelClass, todo_item_layout, recyclerViewHolderClass, child);
 		this.mContext = mContext;
 		this.todoItemListener = todoItemListener;

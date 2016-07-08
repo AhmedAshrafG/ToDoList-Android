@@ -21,14 +21,17 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ahmadz.todolist.Adapters.TodoListAdapter;
 import com.example.ahmadz.todolist.Callbacks.TodoItemListener;
+import com.example.ahmadz.todolist.Database.FireBaseHelper;
 import com.example.ahmadz.todolist.Models.RecyclerViewHolder;
 import com.example.ahmadz.todolist.Models.TodoItemModel;
 import com.example.ahmadz.todolist.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	private final String TAG = this.getClass().getSimpleName();
 	@Bind(R.id.toolbar) Toolbar toolbar;
-	@Bind(R.id.todo_lv) RecyclerView todoLv;
+	@Bind(R.id.todo_lv) RecyclerView todoRecyclerView;
 	@Bind(R.id.progressBar) ProgressBar progressBar;
 	@Bind(R.id.empty_message) TextView emptyMessage;
 
@@ -57,11 +60,11 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 		getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
 		mContext = this;
-		FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
 		setupAuthentication();
 
 		if (mAuth.getCurrentUser() != null){
+			progressBar.setVisibility(View.VISIBLE);
 			setupFireBaseDB();
 			setupFireBaseUI();
 			checkForEmptiness();
@@ -83,14 +86,46 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	private void setupFireBaseDB() {
 		String mUserUID = mAuth.getCurrentUser().getUid();
-		mUserDB = FirebaseDatabase.getInstance()
+		mUserDB = FireBaseHelper.getDatabase()
 				.getReference(getString(R.string.users_node))
 				.child(mUserUID);
+
+		mUserDB.child(getString(R.string.todo_list_node))
+				.addChildEventListener(new ChildEventListener() {
+					@Override
+					public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+						Log.i(TAG, "onChildAdded: ");
+						progressBar.setVisibility(View.INVISIBLE);
+					}
+
+					@Override
+					public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+						Log.i(TAG, "onChildChanged: ");
+					}
+
+					@Override
+					public void onChildRemoved(DataSnapshot dataSnapshot) {
+						Log.i(TAG, "onChildRemoved: ");
+					}
+
+					@Override
+					public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+					}
+
+					@Override
+					public void onCancelled(DatabaseError databaseError) {
+
+					}
+				});
 	}
 
 	private void setupFireBaseUI() {
-		todoLv.setHasFixedSize(true);
-		todoLv.setLayoutManager(new LinearLayoutManager(this));
+		todoRecyclerView.setHasFixedSize(true);
+		LinearLayoutManager llm = new LinearLayoutManager(this);
+		llm.setReverseLayout(true);
+		llm.setStackFromEnd(true);
+		todoRecyclerView.setLayoutManager(llm);
 
 		adapter = new TodoListAdapter(
 				mContext,
@@ -98,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 				TodoItemModel.class,
 				R.layout.todo_item_layout,
 				RecyclerViewHolder.class,
-				mUserDB.child(getString(R.string.todo_list_node))
+				mUserDB.child(getString(R.string.todo_list_node)).orderByPriority()
 		);
-		todoLv.setAdapter(adapter);
+		todoRecyclerView.setAdapter(adapter);
 	}
 
 	@Override
@@ -148,7 +183,9 @@ public class MainActivity extends AppCompatActivity implements TodoItemListener 
 
 	private void addTodoItem(String todoTitle) {
 		TodoItemModel todoItem = new TodoItemModel(todoTitle);
-		mUserDB.child(getString(R.string.todo_list_node)).push().setValue(todoItem);
+		DatabaseReference newTodo = mUserDB.child(getString(R.string.todo_list_node)).push();
+		newTodo.setValue(todoItem);
+		newTodo.setPriority(TodoItemModel.DEFAULT_PRIORITY);
 		checkForEmptiness();
 	}
 
