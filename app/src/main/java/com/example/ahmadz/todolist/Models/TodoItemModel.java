@@ -15,6 +15,7 @@ public class TodoItemModel implements Serializable{
 	private long timeInMS;
 	@Exclude
 	private final Calendar mCal;
+	@Exclude
 	public static int DEFAULT_PRIORITY = 1;
 
 	public TodoItemModel(){
