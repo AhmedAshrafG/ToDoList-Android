@@ -26,6 +26,8 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 
 * User gets notified when changes aren't saved on exit.
+* User login and logout.
+* Saving/Syncing real-time data per user [using FireBase](https://firebase.google.com/docs/android/).
 
 ## Video Walkthrough 
 
